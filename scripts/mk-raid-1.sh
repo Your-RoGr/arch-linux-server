@@ -1,6 +1,7 @@
 #!/bin/bash
 
 sudo fdisk -l
+lsblk
 echo "Enter the number of devices for RAID 1 (minimum 2):"
 read num_devices
 
@@ -34,5 +35,5 @@ sudo mdadm --create /dev/md$free_number --level=1 --raid-devices=$num_devices $d
 sudo mkfs.ext4 /dev/md$free_number
 sudo mkdir /mnt/raid$free_number
 sudo mount /dev/md$free_number /mnt/raid$free_number
-echo '/dev/md'$free_number' /mnt/raid'$free_number' ext4 defaults 0 0' | sudo tee -a /etc/fstab
+echo '/dev/md'$free_number' /mnt/raid'$free_number' auto defaults 0 2' | sudo tee -a /etc/fstab
 sudo mdadm --detail /dev/md$free_number

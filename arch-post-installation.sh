@@ -78,8 +78,8 @@ cd ..
 rm -rf ~/yay
 
 # Install other soft
-echo "Installing clang, gdb, ninja, gcc, cmake, fastfetch, htop, bashtop, lf, fish"
-sudo pacman -Sy --noconfirm clang gdb ninja gcc cmake fastfetch htop bashtop lf fish
+echo "Installing clang, gdb, ninja, gcc, cmake, fastfetch, htop, bashtop, lf, fish, mdadm"
+sudo pacman -Sy --noconfirm clang gdb ninja gcc cmake fastfetch htop bashtop lf fish mdadm
 
 sudo chsh -s /bin/fish $(whoami)
 
@@ -90,6 +90,9 @@ sudo systemctl start systemd-homed
 # yay -Sy --noconfirm iwgtk
 # sudo systemctl enable iwd.service
 # sudo systemctl start iwd.service
+
+echo "Installing downgrade"
+yay -Sy --noconfirm downgrade
 
 chmod +x software-installer.sh
 ./software-installer.sh

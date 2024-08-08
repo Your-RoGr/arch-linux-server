@@ -15,6 +15,7 @@ hostname=$(echo $hostname | tr -cd '[:alnum:]_-')
 echo "You entered: $hostname"
 
 fdisk -l
+lsblk
 echo "Enter your disk (press enter for default: sda):"
 read sd
 sd=${sd:-sda}
