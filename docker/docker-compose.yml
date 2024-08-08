@@ -70,6 +70,7 @@ services:
     volumes:
       - "/mnt/raid0/etc/letsencrypt:/etc/letsencrypt"
       - "/mnt/raid0/var/lib/letsencrypt:/var/lib/letsencrypt"
+      - "/mnt/raid0/var/log/letsencrypt:/var/log/letsencrypt"
     healthcheck:
       test: ["CMD-SHELL", "certbot renew --quiet || exit 0"]
       interval: 720h
