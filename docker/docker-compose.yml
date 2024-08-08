@@ -31,7 +31,7 @@ services:
     # ports: 
     #  - "5432:5432"
     volumes:
-      - extrolabs-db-data:/var/lib/postgresql/data
+      - /mnt/raid0/var/lib/postgresql/data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d extrolabs"]
       interval: 10s
@@ -54,7 +54,7 @@ services:
       - "9022:22"
       - "9880:3000"
     volumes:
-      - gogs-data:/data
+      - /mnt/raid0/var/gogs:/data
     environment:
       - SOCAT_LINK=true
       - RUN_CROND=false
@@ -85,15 +85,3 @@ services:
 
 networks:
   extrolabs_network:
-
-volumes:
-  extrolabs-db-data:
-    driver: local
-    driver_opts:
-      device: /mnt/raid0/extrolabs-db-data
-  gogs-data:
-    driver: local
-    driver_opts:
-      type: none
-      device: /mnt/raid0/var/gogs
-      o: bind
