@@ -90,10 +90,10 @@ volumes:
   extrolabs-db-data:
     driver: local
     driver_opts:
-      device: "/mnt/raid0/extrolabs-db-data"
+      device: /mnt/raid0/extrolabs-db-data
   gogs-data:
     driver: local
     driver_opts:
       type: none
-      device: "/mnt/raid0/var/gogs"
+      device: /mnt/raid0/var/gogs
       o: bind
