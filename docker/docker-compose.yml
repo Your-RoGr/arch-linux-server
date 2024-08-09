@@ -12,6 +12,7 @@ services:
       - ./nginx/access.log:/var/log/nginx/access.log
       - "/mnt/raid0/etc/letsencrypt:/etc/letsencrypt"
       - "/mnt/raid0/var/lib/letsencrypt:/var/lib/letsencrypt"
+      - ./options-ssl-nginx.conf:/etc/letsencrypt/options-ssl-nginx.conf
     ports:
       - "80:80"
     network_mode: host
@@ -71,13 +72,15 @@ services:
       - "/mnt/raid0/etc/letsencrypt:/etc/letsencrypt"
       - "/mnt/raid0/var/lib/letsencrypt:/var/lib/letsencrypt"
       - "/mnt/raid0/var/log/letsencrypt:/var/log/letsencrypt"
+      - "/mnt/raid0/var/www/certbot:/var/www/certbot"
     healthcheck:
       test: ["CMD-SHELL", "certbot renew --quiet || exit 0"]
       interval: 720h
       timeout: 1h
       retries: 5
       start_period: 10s
-    command: certonly --standalone --preferred-challenges http --agree-tos --no-eff-email -d gogs.extrolabs.ru
+    # command: certonly --dry-run --standalone --preferred-challenges http --agree-tos --no-eff-email -d gogs.extrolabs.ru
+    command: certonly --webroot --webroot-path /var/www/certbot --agree-tos --no-eff-email -d 
     deploy:
       resources:
         limits:
