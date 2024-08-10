@@ -46,9 +46,12 @@ for domain in ${!domains[*]}; do
 
   if [ ! -e "$data_path/conf/live/$domain_name/cert.pem" ]; then
     echo "### Creating dummy certificate for $domain_name domain..."
-    path="/etc/letsencrypt/live/$domain_name"
+
+    path="./data/certbot/conf/live/$domain_name"
     sudo cp ./privkey.pem "$path/privkey.pem"
     sudo cp ./fullchain.pem "$path/fullchain.pem"
+    
+    # path="/etc/letsencrypt/live/$domain_name"
     # sudo docker-compose run --rm --entrypoint "openssl req -x509 -nodes -newkey rsa:1024 \
     # -days 1 -keyout '$path/privkey.pem' -out '$path/fullchain.pem' -subj '/CN=localhost'" extrolabs_certbot
   fi
@@ -85,8 +88,8 @@ for domain in ${!domains[*]}; do
   if [ -e "$data_path/conf/live/$domain_name/cert.pem" ]; then
     echo "Skipping $domain_name domain"; else
 
-    # echo "### Deleting dummy certificate for $domain_name domain ..."
-    # sudo rm -rf "$data_path/conf/live/$domain_name"
+    echo "### Deleting dummy certificate for $domain_name domain ..."
+    sudo rm -rf "$data_path/conf/live/$domain_name"
 
     echo "### Requesting Let's Encrypt certificate for $domain_name domain ..."
 
