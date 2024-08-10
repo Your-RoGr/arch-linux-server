@@ -42,12 +42,12 @@ for domain in ${!domains[*]}; do
   domain_set=(${domains[$domain]})
   domain_name=`echo ${domain_set[0]} | grep -o -P $regex`
   
-  mkdir -p "$data_path/conf/live/$domain_name"
+  sudo mkdir -p "$data_path/conf/live/$domain_name"
 
   if [ ! -e "$data_path/conf/live/$domain_name/cert.pem" ]; then
     echo "### Creating dummy certificate for $domain_name domain..."
     path="/etc/letsencrypt/live/$domain_name"
-    docker-compose run --rm --entrypoint "openssl req -x509 -nodes -newkey rsa:1024 \
+    sudo docker-compose run --rm --entrypoint "openssl req -x509 -nodes -newkey rsa:1024 \
     -days 1 -keyout '$path/privkey.pem' -out '$path/fullchain.pem' -subj '/CN=localhost'" extrolabs_certbot
   fi
 done
@@ -84,7 +84,7 @@ for domain in ${!domains[*]}; do
     echo "Skipping $domain_name domain"; else
 
     echo "### Deleting dummy certificate for $domain_name domain ..."
-    rm -rf "$data_path/conf/live/$domain_name"
+    sudo rm -rf "$data_path/conf/live/$domain_name"
 
     echo "### Requesting Let's Encrypt certificate for $domain_name domain ..."
 
@@ -94,8 +94,8 @@ for domain in ${!domains[*]}; do
       domain_args="$domain_args -d $domain"
     done
 
-    mkdir -p "$data_path/www"
-    docker-compose run --rm --entrypoint "certbot certonly --webroot -w /var/www/certbot --cert-name $domain_name $domain_args \
+    sudo mkdir -p "$data_path/www"
+    sudo docker-compose run --rm --entrypoint "certbot certonly --webroot -w /var/www/certbot --cert-name $domain_name $domain_args \
     $staging_arg $email_arg --rsa-key-size $rsa_key_size --agree-tos --force-renewal --non-interactive" extrolabs_certbot
   fi
 done
