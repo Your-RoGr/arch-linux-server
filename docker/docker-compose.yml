@@ -3,84 +3,77 @@ version: "3.9"
 services:
 
   extrolabs_nginx:
+    container_name: extrolabs_nginx
     image: nginx:stable
     restart: unless-stopped
-    container_name: extrolabs_nginx
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/error.log:/var/log/nginx/error.log
-      - ./nginx/access.log:/var/log/nginx/access.log
-      - "/mnt/raid0/etc/letsencrypt:/etc/letsencrypt"
-      - "/mnt/raid0/var/lib/letsencrypt:/var/lib/letsencrypt"
-      - ./options-ssl-nginx.conf:/etc/letsencrypt/options-ssl-nginx.conf
+      - ./data/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./data/nginx/error.log:/var/log/nginx/error.log
+      - ./data/nginx/access.log:/var/log/nginx/access.log
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    command: '/bin/sh -c ''while :; do sleep 12h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
     ports:
       - "80:80"
+      - "443:443"
     network_mode: host
     depends_on:
       - extrolabs_certbot
 
   extrolabs_db:
+    container_name: extrolabs_db
     image: postgres
     restart: unless-stopped
-    container_name: extrolabs_db
+    volumes:
+      - /mnt/raid0/extrolabs_db/var/lib/postgresql/data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: extrolabs
       POSTGRES_HOST: "0.0.0.0"
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 81903812737316853165316
       POSTGRES_SSL_MODE: disable
-    # ports: 
-    #  - "5432:5432"
-    volumes:
-      - /mnt/raid0/var/lib/postgresql/data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d extrolabs"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
+    # ports: 
+    #  - "5432:5432"
+    networks:
+      - extrolabs_network
     deploy:
       resources:
         limits:
           cpus: '1'
           memory: 4G
-    networks:
-      - extrolabs_network
 
   extrolabs_gogs:
-    image: gogs/gogs:latest
     container_name: extrolabs_gogs
+    image: gogs/gogs:latest
     restart: unless-stopped
-    ports:
-      - "9022:22"
-      - "9880:3000"
     volumes:
-      - /mnt/raid0/var/gogs:/data
+      - /mnt/raid0/extrolabs_gogs/var/gogs:/data
     environment:
       - SOCAT_LINK=true
       - RUN_CROND=false
     depends_on:
       - extrolabs_db
+    ports:
+      - "9022:22"
+      - "9880:3000"
     networks:
       - extrolabs_network
 
   extrolabs_certbot:
-    image: certbot/certbot:latest
     container_name: extrolabs_certbot
+    image: certbot/certbot:latest
     restart: unless-stopped
     volumes:
-      - "/mnt/raid0/etc/letsencrypt:/etc/letsencrypt"
-      - "/mnt/raid0/var/lib/letsencrypt:/var/lib/letsencrypt"
-      - "/mnt/raid0/var/log/letsencrypt:/var/log/letsencrypt"
-      - "/mnt/raid0/var/www/certbot:/var/www/certbot"
-    healthcheck:
-      test: ["CMD-SHELL", "certbot renew --quiet || exit 0"]
-      interval: 720h
-      timeout: 1h
-      retries: 5
-      start_period: 10s
-    # command: certonly --dry-run --standalone --preferred-challenges http --agree-tos --no-eff-email -d gogs.extrolabs.ru
-    command: certonly --webroot --webroot-path /var/www/certbot --agree-tos --no-eff-email -d gogs.extrolabs.ru
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+      - ./data/certbot/log:/var/log/letsencrypt"
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 24h & wait $${!}; done;'"
     deploy:
       resources:
         limits:
