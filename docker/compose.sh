@@ -6,7 +6,7 @@ cd "$(dirname $0)"
 
 # Variables
 # domains=("example.com www.example.com" "another-example.com www.another-example.com")
-domains=("gogs.extrolabs.ru www.gogs.extrolabs.ru")
+domains=("gogs.extrolabs.ru")
 email="" # Adding a valid address is strongly recommended
 staging=1 # Set to 1 if you're testing your setup to avoid hitting request limits
 
