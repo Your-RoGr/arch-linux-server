@@ -47,8 +47,10 @@ for domain in ${!domains[*]}; do
   if [ ! -e "$data_path/conf/live/$domain_name/cert.pem" ]; then
     echo "### Creating dummy certificate for $domain_name domain..."
     path="/etc/letsencrypt/live/$domain_name"
-    sudo docker-compose run --rm --entrypoint "openssl req -x509 -nodes -newkey rsa:1024 \
-    -days 1 -keyout '$path/privkey.pem' -out '$path/fullchain.pem' -subj '/CN=localhost'" extrolabs_certbot
+    sudo cp ./privkey.pem '$path/privkey.pem'
+    sudo cp ./fullchain.pem '$path/fullchain.pem'
+    # sudo docker-compose run --rm --entrypoint "openssl req -x509 -nodes -newkey rsa:1024 \
+    # -days 1 -keyout '$path/privkey.pem' -out '$path/fullchain.pem' -subj '/CN=localhost'" extrolabs_certbot
   fi
 done
 
