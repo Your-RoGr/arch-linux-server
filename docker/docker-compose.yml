@@ -27,10 +27,10 @@ services:
     volumes:
       - /mnt/raid0/extrolabs_db/var/lib/postgresql/data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: extrolabs
+      POSTGRES_DB: gogs
       POSTGRES_HOST: "0.0.0.0"
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 81903812737316853165316
+      POSTGRES_PASSWORD: 819038127373
       POSTGRES_SSL_MODE: disable
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d extrolabs"]

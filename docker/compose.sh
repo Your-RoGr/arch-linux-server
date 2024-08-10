@@ -88,8 +88,8 @@ for domain in ${!domains[*]}; do
   if [ -e "$data_path/conf/live/$domain_name/cert.pem" ]; then
     echo "Skipping $domain_name domain"; else
 
-    echo "### Deleting dummy certificate for $domain_name domain ..."
-    sudo rm -rf "$data_path/conf/live/$domain_name"
+    # echo "### Deleting dummy certificate for $domain_name domain ..."
+    # sudo rm -rf "$data_path/conf/live/$domain_name"
 
     echo "### Requesting Let's Encrypt certificate for $domain_name domain ..."
 
