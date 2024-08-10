@@ -32,6 +32,11 @@ sudo mkdir -p "$data_path/log"
 sudo cp ./options-ssl-nginx.conf "$data_path/conf/options-ssl-nginx.conf"
 sudo cp ./ssl-dhparams.pem "$data_path/conf/ssl-dhparams.pem"
 
+sudo chown -R $USER ./data
+
+echo "### docker compose up extrolabs_certbot"
+sudo docker compose up -d extrolabs_certbot
+
 # Dummy certificate
 for domain in ${!domains[*]}; do
   domain_set=(${domains[$domain]})
@@ -43,7 +48,7 @@ for domain in ${!domains[*]}; do
     echo "### Creating dummy certificate for $domain_name domain..."
     path="/etc/letsencrypt/live/$domain_name"
     docker-compose run --rm --entrypoint "openssl req -x509 -nodes -newkey rsa:1024 \
-    -days 1 -keyout '$path/privkey.pem' -out '$path/fullchain.pem' -subj '/CN=localhost'" certbot
+    -days 1 -keyout '$path/privkey.pem' -out '$path/fullchain.pem' -subj '/CN=localhost'" extrolabs_certbot
   fi
 done
 
@@ -91,6 +96,6 @@ for domain in ${!domains[*]}; do
 
     mkdir -p "$data_path/www"
     docker-compose run --rm --entrypoint "certbot certonly --webroot -w /var/www/certbot --cert-name $domain_name $domain_args \
-    $staging_arg $email_arg --rsa-key-size $rsa_key_size --agree-tos --force-renewal --non-interactive" certbot
+    $staging_arg $email_arg --rsa-key-size $rsa_key_size --agree-tos --force-renewal --non-interactive" extrolabs_certbot
   fi
 done
