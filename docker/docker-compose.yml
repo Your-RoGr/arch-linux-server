@@ -27,11 +27,11 @@ services:
     volumes:
       - /mnt/raid0/extrolabs_db/var/lib/postgresql/data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: gogs
+      POSTGRES_DB: ${DB_NAME}
       POSTGRES_HOST: "0.0.0.0"
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 819038127373
-      POSTGRES_SSL_MODE: disable
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_SSL_MODE: ${DB_SSL_MODE}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d extrolabs"]
       interval: 10s
@@ -50,17 +50,16 @@ services:
 
   extrolabs_gogs:
     container_name: extrolabs_gogs
-    image: gogs/gogs:latest
+    build:
+      context: ./gogs
+      dockerfile: Dockerfile
     restart: unless-stopped
     volumes:
       - /mnt/raid0/extrolabs_gogs/var/gogs:/data
-    environment:
-      - SOCAT_LINK=true
-      - RUN_CROND=false
     depends_on:
       - extrolabs_db
     ports:
-      - "9022:22"
+      - "9022:9022"
       - "9880:3000"
     networks:
       - extrolabs_network

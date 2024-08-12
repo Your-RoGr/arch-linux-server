@@ -1,3 +1,5 @@
 data/
-# fullchain.pem
-# privkey.pem
+gogs-backup.zip
+
+/docker/.env
+/docker/gogs-conf/app.ini

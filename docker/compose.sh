@@ -8,7 +8,7 @@ cd "$(dirname $0)"
 # domains=("example.com www.example.com" "another-example.com www.another-example.com")
 domains=("gogs.extrolabs.ru")
 email="" # Adding a valid address is strongly recommended
-staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
+staging=1 # Set to 1 if you're testing your setup to avoid hitting request limits
 
 data_path="./data/certbot"
 rsa_key_size=4096
@@ -22,15 +22,15 @@ sudo mkdir -p ./data/nginx
 
 sudo touch ./data/nginx/error.log
 sudo touch ./data/nginx/access.log
-sudo cp ./nginx.conf ./data/nginx/nginx.conf
+sudo cp ./nginx-conf/nginx.conf ./data/nginx/nginx.conf
 
 # certbot dirs
 sudo mkdir -p "$data_path/conf"
 sudo mkdir -p "$data_path/www"
 sudo mkdir -p "$data_path/log"
 
-sudo cp ./options-ssl-nginx.conf "$data_path/conf/options-ssl-nginx.conf"
-sudo cp ./ssl-dhparams.pem "$data_path/conf/ssl-dhparams.pem"
+sudo cp ./nginx-conf/options-ssl-nginx.conf "$data_path/conf/options-ssl-nginx.conf"
+sudo cp ./nginx-conf/ssl-dhparams.pem "$data_path/conf/ssl-dhparams.pem"
 
 sudo chown -R $USER ./data
 
@@ -48,12 +48,8 @@ for domain in ${!domains[*]}; do
     echo "### Creating dummy certificate for $domain_name domain..."
 
     path="./data/certbot/conf/live/$domain_name"
-    sudo cp ./privkey.pem "$path/privkey.pem"
-    sudo cp ./fullchain.pem "$path/fullchain.pem"
-    
-    # path="/etc/letsencrypt/live/$domain_name"
-    # sudo docker-compose run --rm --entrypoint "openssl req -x509 -nodes -newkey rsa:1024 \
-    # -days 1 -keyout '$path/privkey.pem' -out '$path/fullchain.pem' -subj '/CN=localhost'" extrolabs_certbot
+    sudo cp ./nginx-conf/privkey.pem "$path/privkey.pem"
+    sudo cp ./nginx-conf/fullchain.pem "$path/fullchain.pem"
   fi
 done
 
@@ -104,3 +100,17 @@ for domain in ${!domains[*]}; do
     $staging_arg $email_arg --rsa-key-size $rsa_key_size --agree-tos --force-renewal --non-interactive" extrolabs_certbot
   fi
 done
+
+if [ -f ./gogs-conf/gogs-backup.zip ]; then
+  # Copy backup
+  sudo docker cp ./gogs-conf/gogs-backup.zip extrolabs_gogs:/app/gogs
+  sudo docker cp ./gogs-conf/restore-gogs.sh extrolabs_gogs:/app/gogs
+  sudo docker cp ./gogs-conf/app.ini extrolabs_gogs:/data/gogs/conf 
+
+  sudo docker compose exec -it -u git extrolabs_gogs sh -c "cd /app/gogs && chmod +x ./restore-gogs.sh && ./restore-gogs.sh"
+  
+  echo "### restart extrolabs_gogs"
+  sudo docker compose restart extrolabs_gogs
+else
+  echo "The file ./gogs-conf/gogs-backup.zip does not exist."
+fi
