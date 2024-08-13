@@ -737,7 +737,7 @@ func (repo *Repository) cloneLink(isWiki bool) *repoutil.CloneLink {
 
 	repo.Owner = repo.MustOwner()
 	cl := new(repoutil.CloneLink)
-	if conf.SSH.Port != 22 && conf.SSH.Port != 9022 {
+	if conf.SSH.Port != 22 {
 		cl.SSH = fmt.Sprintf("ssh://%s@%s:%d/%s/%s.git", conf.App.RunUser, conf.SSH.Domain, conf.SSH.Port, repo.Owner.Name, repoName)
 	} else {
 		cl.SSH = fmt.Sprintf("%s@%s:%s/%s.git", conf.App.RunUser, conf.SSH.Domain, repo.Owner.Name, repoName)

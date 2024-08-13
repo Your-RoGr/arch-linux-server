@@ -26,7 +26,7 @@ func NewCloneLink(owner, repo string, isWiki bool) *CloneLink {
 	}
 
 	cl := new(CloneLink)
-	if conf.SSH.Port != 22 && conf.SSH.Port != 9022 {
+	if conf.SSH.Port != 22 {
 		cl.SSH = fmt.Sprintf("ssh://%s@%s:%d/%s/%s.git", conf.App.RunUser, conf.SSH.Domain, conf.SSH.Port, owner, repo)
 	} else {
 		cl.SSH = fmt.Sprintf("%s@%s:%s/%s.git", conf.App.RunUser, conf.SSH.Domain, owner, repo)

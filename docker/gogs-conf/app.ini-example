@@ -8,7 +8,8 @@ HOST     = extrolabs_db:5432
 NAME     = gogs
 SCHEMA   = public
 USER     = postgres
-PASSWORD = 
+# Write password for gogs database and change in .env
+PASSWORD = ""
 SSL_MODE = disable
 PATH     = /app/gogs/data/gogs.db
 
@@ -23,7 +24,7 @@ EXTERNAL_URL     = https://gogs.extrolabs.ru/
 DISABLE_SSH      = false
 SSH_PORT         = 9022
 START_SSH_SERVER = true
-SSH_DOMAIN       = gogs.extrolabs.ru/ssh
+SSH_DOMAIN       = gogs.extrolabs.ru
 OFFLINE_MODE     = false
 
 [email]

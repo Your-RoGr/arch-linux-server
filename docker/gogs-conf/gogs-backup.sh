@@ -1,3 +1,4 @@
+#!/bin/bash
 
 # Create backup
 su git

@@ -3,14 +3,16 @@
 # Restore database
 ./gogs restore --from="gogs-backup.zip" --database-only
 mkdir tmp
-unzip gogs-backup.zip -d tmp
+echo "unzip gogs-backup.zip"
+unzip -q gogs-backup.zip -d tmp
 
 # Restore pics
 mv tmp/gogs-backup/data/avatars data
 mv tmp/gogs-backup/data/repo-avatars data
 
 # Restore git
-unzip tmp/gogs-backup/repositories.zip -d /data/git
+echo "unzip tmp/gogs-backup/repositories.zip"
+unzip -q tmp/gogs-backup/repositories.zip -d /data/git
 git config --global --add safe.directory /data/git/gogs-repositories/rogr/multios-api.git
 
 # Set the base directory
